@@ -15,7 +15,6 @@ public class PlayerLook : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("Mouse Sensitivity: " + mouseSensitivity);
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
