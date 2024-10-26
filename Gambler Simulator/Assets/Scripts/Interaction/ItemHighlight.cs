@@ -1,11 +1,12 @@
 using UnityEngine;
 using TMPro; // Importuj przestrzeń nazw TextMeshPro
+using UnityEngine.UI; // Importuj przestrzeń nazw dla UI
 
 public class ItemHighlight : MonoBehaviour
 {
     public float interactionRange = 3f; // Zasięg interakcji
-    private GameObject currentHighlightedObject;
     public TMP_Text interactionText; // Referencja do komponentu TextMeshPro
+    public GameObject optionsPanel; // Referencja do panelu z opcjami
 
     void Start()
     {
@@ -13,6 +14,12 @@ public class ItemHighlight : MonoBehaviour
         if (interactionText != null)
         {
             interactionText.text = ""; // Pusty tekst
+        }
+
+        // Ukryj panel z opcjami
+        if (optionsPanel != null)
+        {
+            optionsPanel.SetActive(false); // Ukryj panel na początku
         }
     }
 
@@ -34,7 +41,7 @@ public class ItemHighlight : MonoBehaviour
                 // Wyświetlenie komunikatu
                 if (interactionText != null)
                 {
-                    interactionText.text = "Kliknij E, aby wejść w interakcję"; 
+                    interactionText.text = "Kliknij E, aby wybrać opcję"; 
                 }
 
                 // Dodaj opcję interakcji, np. naciśnięcie "E"
@@ -42,6 +49,11 @@ public class ItemHighlight : MonoBehaviour
                 {
                     // Wykonaj interakcję
                     newInteractionScript.Interact();
+                    // Pokaż panel z opcjami
+                    if (optionsPanel != null)
+                    {
+                        optionsPanel.SetActive(true);
+                    }
                 }
             }
         }
@@ -52,7 +64,15 @@ public class ItemHighlight : MonoBehaviour
             {
                 interactionText.text = ""; 
             }
-            currentHighlightedObject = null;
+        }
+    }
+
+    // Funkcja do zamykania panelu opcji (możesz przypisać ją do przycisku)
+    public void CloseOptionsPanel()
+    {
+        if (optionsPanel != null)
+        {
+            optionsPanel.SetActive(false);
         }
     }
 }

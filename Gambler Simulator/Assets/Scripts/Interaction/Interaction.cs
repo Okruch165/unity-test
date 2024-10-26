@@ -4,7 +4,7 @@ public class Interaction : MonoBehaviour
 {
     public void Interact()
     {
-        // Wykonaj akcję interakcji (np. otwarcie drzwi, zbieranie przedmiotu)
-        Debug.Log("Interakcja z obiektem: " + gameObject.name);
+        // Here you can define what happens when the object is interacted with.
+        Debug.Log("Interacted with " + gameObject.name);
     }
 }
