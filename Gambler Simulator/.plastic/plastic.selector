@@ -1,0 +1,4 @@
+repository "Gambler Simulator@oskarjablonski061@cloud"
+  path "/"
+    br "/main"
+    co "/main"
