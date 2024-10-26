@@ -1,10 +1,20 @@
 using UnityEngine;
+using TMPro; // Importuj przestrzeń nazw TextMeshPro
 
 public class ItemHighlight : MonoBehaviour
 {
     public float interactionRange = 3f; // Zasięg interakcji
     private GameObject currentHighlightedObject;
-    private Interaction interactionScript;
+    public TMP_Text interactionText; // Referencja do komponentu TextMeshPro
+
+    void Start()
+    {
+        // Ukryj tekst na początku
+        if (interactionText != null)
+        {
+            interactionText.text = ""; // Pusty tekst
+        }
+    }
 
     void Update()
     {
@@ -21,28 +31,28 @@ public class ItemHighlight : MonoBehaviour
 
             if (newInteractionScript != null)
             {
-                // Jeśli nowy obiekt jest różny od obecnie podświetlonego
-                if (currentHighlightedObject != hitObject)
+                // Wyświetlenie komunikatu
+                if (interactionText != null)
                 {
-                    // Wyłączenie podświetlenia poprzedniego obiektu
-                    if (currentHighlightedObject != null)
-                    {
-                        interactionScript.ToggleOutline(false);
-                    }
+                    interactionText.text = "Kliknij E, aby wejść w interakcję"; 
+                }
 
-                    // Przełączenie na nowy obiekt
-                    currentHighlightedObject = hitObject;
-                    interactionScript = newInteractionScript;
-                    interactionScript.ToggleOutline(true);
+                // Dodaj opcję interakcji, np. naciśnięcie "E"
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    // Wykonaj interakcję
+                    newInteractionScript.Interact();
                 }
             }
         }
-        else if (currentHighlightedObject != null)
+        else
         {
-            // Wyłączenie podświetlenia, jeśli nie trafiono w obiekt
-            interactionScript.ToggleOutline(false);
+            // Ukryj tekst, gdy nie ma obiektu
+            if (interactionText != null)
+            {
+                interactionText.text = ""; 
+            }
             currentHighlightedObject = null;
-            interactionScript = null;
         }
     }
 }
