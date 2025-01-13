@@ -21,8 +21,6 @@ public class RockPaperScissors : MonoBehaviour
     [Header("Game Settings")]
     public int minBet = 5;      // Minimalna kwota do obstawienia
     public int maxBet = 50;     // Maksymalna kwota do obstawienia
-    public int rewardAmount = 30;  // Nagroda za wygraną
-    public int drawAmount = 20;   // Kwota zwrotu w przypadku remisu
 
     private int entryFee;  // Koszt gry - zależny od wpisanej kwoty
     private MoneyManager moneyManager; // Referencja do systemu pieniędzy
@@ -149,14 +147,14 @@ public class RockPaperScissors : MonoBehaviour
         if (playerChoice == npcChoice)
         {
             ShowMessage("It's a draw!");
-            moneyManager.AddMoney(drawAmount); // Zwrot części wpisowego
+            moneyManager.AddMoney(entryFee); // Zwróć wpisową kwotę w przypadku remisu
         }
         else if ((playerChoice == Choice.Rock && npcChoice == Choice.Scissors) ||
                  (playerChoice == Choice.Paper && npcChoice == Choice.Rock) ||
                  (playerChoice == Choice.Scissors && npcChoice == Choice.Paper))
         {
             ShowMessage("Player wins!");
-            moneyManager.AddMoney(rewardAmount); // Dodaj nagrodę
+            moneyManager.AddMoney(entryFee * 2); // Dodaj podwójną wpisową kwotę w przypadku wygranej
         }
         else
         {
