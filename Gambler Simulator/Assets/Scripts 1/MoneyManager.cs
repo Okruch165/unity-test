@@ -69,3 +69,4 @@ public class MoneyManager : MonoBehaviour
         Debug.Log("Money loaded: " + money);
     }
 }
+xd
