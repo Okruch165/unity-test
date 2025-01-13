@@ -4,76 +4,134 @@ using UnityEngine.UI;
 
 public class BlockRaceGame : MonoBehaviour
 {
-    public GameObject[] rats; // Array of rats
-    public float minSpeed = 1f; // Minimum speed of the rats
-    public float maxSpeed = 5f; // Maximum speed of the rats
-    public Text resultText; // UI Text to display the result
-    public MoneyManager moneyManager; // Reference to MoneyManager
-    private int playerBet; // Player's bet on which rat will win
-    public int betCost = 50; // Cost to place a bet
-    public int winPayout = 200; // Payout for winning
+    public GameObject[] rats; // Tablica szczurów
+    public GameObject finishLine; // Obiekt mety
+    public float minSpeed = 1f; // Minimalna prędkość szczurów
+    public float maxSpeed = 5f; // Maksymalna prędkość szczurów
+    public Text resultText; // Tekst do wyświetlenia wyniku
+    public MoneyManager moneyManager; // Referencja do MoneyManager
+    private int playerBet; // Zakład gracza na szczura
+    public int betCost = 50; // Koszt zakładu
+    public int winPayout = 200; // Wygrana za trafienie
+    public Text instructionText; // Tekst instrukcji
+    private bool hasWinningRatReachedFinishLine = false; // Flaga, czy szczur gracza dotarł do mety
+    public Vector3[] startPositions; // Tablica pozycji startowych dla szczurów
 
     private void Start()
     {
-        // Initialize rats and money manager
-        moneyManager = FindObjectOfType<MoneyManager>();
+        instructionText.text = "Press E to start betting!"; // Wyświetl instrukcję na starcie
+        moneyManager = FindObjectOfType<MoneyManager>(); // Znajdź MoneyManager w scenie
+    }
+
+    private void StartBettingProcess()
+    {
+        Debug.Log("Press 1, 2, 3, or 4 to bet on a rat!"); // Wyświetl instrukcję w konsoli
+        instructionText.text = "Press 1, 2, 3, or 4 to bet on a rat!"; // Wyświetl instrukcję na ekranie
+        StartCoroutine(WaitForBetInput()); // Rozpocznij oczekiwanie na wybór gracza
     }
 
     public void StartRace(int bet)
     {
         if (moneyManager.money < betCost)
         {
-            resultText.text = "Not enough money to place a bet!";
+            resultText.text = "Not enough money to place a bet!"; // Brak wystarczających środków
             return;
         }
 
-        playerBet = bet;
-        moneyManager.SubtractMoney(betCost); // Deduct the bet cost
-        StartCoroutine(Race());
+        playerBet = bet; // Ustaw zakład gracza
+        hasWinningRatReachedFinishLine = false; // Zresetuj flagę
+        moneyManager.SubtractMoney(betCost); // Odejmij koszt zakładu
+        instructionText.text = ""; // Wyczyść tekst instrukcji
+        StartCoroutine(Race()); // Rozpocznij wyścig
     }
 
     private IEnumerator Race()
     {
-        // Reset positions of rats
-        foreach (var rat in rats)
+        // Ustaw pozycje startowe dla szczurów
+        for (int i = 0; i < rats.Length; i++)
         {
-            rat.transform.position = Vector3.zero; // Start at the origin
+            rats[i].transform.position = startPositions[i]; // Ustaw pozycję startową z tablicy
         }
 
-        // Move rats forward at random speeds
+        // Poruszaj szczurami do przodu z losową prędkością
         while (true)
         {
             for (int i = 0; i < rats.Length; i++)
             {
-                float speed = Random.Range(minSpeed, maxSpeed);
-                rats[i].transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            }
+                float speed = Random.Range(minSpeed, maxSpeed); // Losowa prędkość
+                rats[i].transform.Translate(Vector3.forward * speed * Time.deltaTime); // Porusz szczura
 
-            // Check for a winner
-            for (int i = 0; i < rats.Length; i++)
-            {
-                if (rats[i].transform.position.z >= 10f) // Assuming 10f is the finish line
+                // Sprawdź, czy szczur gracza dotarł do mety
+                if (i == playerBet - 1 && rats[i].transform.position.z >= finishLine.transform.position.z)
                 {
-                    DetermineWinner(i);
-                    yield break;
+                    hasWinningRatReachedFinishLine = true;
                 }
             }
 
-            yield return null; // Wait for the next frame
+            // Sprawdź, czy któryś szczur dotarł do mety
+            for (int i = 0; i < rats.Length; i++)
+            {
+                if (rats[i].transform.position.z >= finishLine.transform.position.z) // Sprawdź, czy szczur dotarł do mety
+                {
+                    DetermineWinner(i); // Określ zwycięzcę
+                    yield break; // Zakończ wyścig
+                }
+            }
+
+            yield return null; // Poczekaj na następną klatkę
         }
     }
 
     private void DetermineWinner(int winningRatIndex)
     {
-        resultText.text = "Rat " + (winningRatIndex + 1) + " wins!";
-        if (playerBet == winningRatIndex + 1)
+        resultText.text = "Rat " + (winningRatIndex + 1) + " wins!"; // Wyświetl, który szczur wygrał
+
+        if (winningRatIndex == playerBet - 1 && hasWinningRatReachedFinishLine)
         {
-            moneyManager.AddMoney(winPayout); // Add payout for winning
-            resultText.text += " You win!";
+            moneyManager.AddMoney(winPayout); // Dodaj wygraną resultText.text += " You win!"; // Wyświetl komunikat o wygranej
         }
         else
         {
-            resultText.text += " You lose!";
+            resultText.text += " You lose!"; // Wyświetl komunikat o przegranej
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E)) // Sprawdź, czy gracz nacisnął klawisz E
+        {
+            StartBettingProcess(); // Rozpocznij proces obstawiania
+        }
+    }
+
+    private IEnumerator WaitForBetInput()
+    {
+        bool betPlaced = false;
+
+        while (!betPlaced)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1)) // Gracz wybrał szczura 1
+            {
+                StartRace(1); // Rozpocznij wyścig z wybranym szczurem
+                betPlaced = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2)) // Gracz wybrał szczura 2
+            {
+                StartRace(2);
+                betPlaced = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3)) // Gracz wybrał szczura 3
+            {
+                StartRace(3);
+                betPlaced = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4)) // Gracz wybrał szczura 4
+            {
+                StartRace(4);
+                betPlaced = true;
+            }
+
+            yield return null; // Poczekaj na następną klatkę
         }
     }
 }
