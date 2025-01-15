@@ -24,7 +24,7 @@ public class RockPaperScissors : MonoBehaviour
 
     private int entryFee;  // Koszt gry - zależny od wpisanej kwoty
     private MoneyManager moneyManager; // Referencja do systemu pieniędzy
-    private bool isGameActive = false; // Flaga sprawdzająca, czy gra jest aktywna
+    public bool isGameActive = false; // Flaga sprawdzająca, czy gra jest aktywna
     private bool hasPlayerChosen = false; // Flaga sprawdzająca, czy gracz dokonał wyboru
 
     private void Start()
@@ -182,7 +182,7 @@ public class RockPaperScissors : MonoBehaviour
         }
     }
 
-    private void EndGame()
+    public void EndGame()
     {
         // Ukryj Canvas
         if (rockPaperScissorsCanvas != null)
@@ -198,10 +198,19 @@ public class RockPaperScissors : MonoBehaviour
         if (resultText != null) resultText.gameObject.SetActive(false);
         if (npcChoiceText != null) npcChoiceText.gameObject.SetActive(false);
 
-        // Ustaw, że gra się zakończyła
+        // Resetuj stan gry
         isGameActive = false;
+        hasPlayerChosen = false;
+        Debug.Log("Game has ended. Flags reset."); // Debug log for game reset
 
-        // Odblokuj przyciski, żeby można było wybrać ponownie
+        // Notify the InteractableObjectRockPaperScissors to reset its state
+        InteractableObjectRockPaperScissors interactableObject = FindObjectOfType<InteractableObjectRockPaperScissors>();
+        if (interactableObject != null)
+        {
+            interactableObject.EndGame();
+        }
+
+        // Odblokuj przyciski na przyszłą grę
         SetButtonsInteractable(true);
     }
 

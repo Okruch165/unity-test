@@ -7,8 +7,7 @@ public class MoneyManager : MonoBehaviour
 
     private void Start()
     {
-        // Opcjonalnie, możesz załadować dane o pieniądzach z zapisu
-        // LoadMoney();
+        UpdateMoneyText(); // Update money display immediately on start
     }
 
     // Funkcja dodająca pieniądze

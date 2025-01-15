@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class BlockRaceGame : MonoBehaviour
 {
+    public Canvas Canvas;
     public GameObject[] rats; // Tablica szczurów
     public GameObject finishLine; // Obiekt mety
     public float minSpeed = 1f; // Minimalna prędkość szczurów
@@ -17,13 +18,16 @@ public class BlockRaceGame : MonoBehaviour
     private bool hasWinningRatReachedFinishLine = false; // Flaga, czy szczur gracza dotarł do mety
     public Vector3[] startPositions; // Tablica pozycji startowych dla szczurów
 
+    private bool isRaceActive = false; // Flaga, czy wyścig jest aktywny
+
     private void Start()
     {
+        Canvas.enabled = false; // Disable the canvas at the start
         instructionText.text = "Press E to start betting!"; // Wyświetl instrukcję na starcie
         moneyManager = FindObjectOfType<MoneyManager>(); // Znajdź MoneyManager w scenie
     }
 
-    private void StartBettingProcess()
+    public void StartBettingProcess() // Changed to public
     {
         Debug.Log("Press 1, 2, 3, or 4 to bet on a rat!"); // Wyświetl instrukcję w konsoli
         instructionText.text = "Press 1, 2, 3, or 4 to bet on a rat!"; // Wyświetl instrukcję na ekranie
@@ -32,9 +36,17 @@ public class BlockRaceGame : MonoBehaviour
 
     public void StartRace(int bet)
     {
+        if (isRaceActive) // Sprawdź, czy wyścig już trwa
+        {
+            Debug.Log("Race is already active.");
+            return; // Jeśli wyścig jest aktywny, zakończ funkcję
+        }
+
+        Debug.Log("Current money: " + moneyManager.money); // Debugging statement to check current money
         if (moneyManager.money < betCost)
         {
             resultText.text = "Not enough money to place a bet!"; // Brak wystarczających środków
+            resultText.gameObject.SetActive(true); // Show the result text
             return;
         }
 
@@ -42,6 +54,8 @@ public class BlockRaceGame : MonoBehaviour
         hasWinningRatReachedFinishLine = false; // Zresetuj flagę
         moneyManager.SubtractMoney(betCost); // Odejmij koszt zakładu
         instructionText.text = ""; // Wyczyść tekst instrukcji
+        resultText.gameObject.SetActive(false); // Hide the result text at the start of the race
+        isRaceActive = true; // Zaktualizuj flagę aktywności wyścigu
         StartCoroutine(Race()); // Rozpocznij wyścig
     }
 
@@ -84,23 +98,43 @@ public class BlockRaceGame : MonoBehaviour
 
     private void DetermineWinner(int winningRatIndex)
     {
-        resultText.text = "Rat " + (winningRatIndex + 1) + " wins!"; // Wyświetl, który szczur wygrał
+        string resultMessage = "Rat " + (winningRatIndex + 1) + " wins!"; // Wyświetl, który szczur wygrał
 
         if (winningRatIndex == playerBet - 1 && hasWinningRatReachedFinishLine)
         {
-            moneyManager.AddMoney(winPayout); // Dodaj wygraną resultText.text += " You win!"; // Wyświetl komunikat o wygranej
+            moneyManager.AddMoney(winPayout); // Dodaj wygraną
+            resultMessage += " You win!"; // Wyświetl komunikat o wygranej
         }
         else
         {
-            resultText.text += " You lose!"; // Wyświetl komunikat o przegranej
+            resultMessage += " You lose!"; // Wyświetl komunikat o przegranej
         }
+
+        resultText.text = resultMessage; // Update the result text
+        resultText.gameObject.SetActive(true); // Show the result text
+
+        // Delay the end of the game to allow the player to see the result
+        StartCoroutine(DelayedEndGame());
     }
 
-    private void Update()
+    private IEnumerator DelayedEndGame()
     {
-        if (Input.GetKeyDown(KeyCode.E)) // Sprawdź, czy gracz nacisnął klawisz E
+        yield return new WaitForSeconds(2); // Wait for 2 seconds before ending the game
+        EndGame(); // Zakończ grę po wyłonieniu zwycięzcy
+    }
+
+    public void EndGame()
+    {
+        isRaceActive = false; // Zaktualizuj flagę, by wyścig nie był aktywny
+        Canvas.enabled = false; // Ukryj canvas
+        hasWinningRatReachedFinishLine = false; // Reset the winning rat flag
+        Debug.Log("Block Race Game has ended. Flags reset."); // Debug log for game reset
+
+        // Notify the InteractableObjectBlockRace to reset its state
+        InteractableObjectBlockRace interactableObject = FindObjectOfType<InteractableObjectBlockRace>();
+        if (interactableObject != null)
         {
-            StartBettingProcess(); // Rozpocznij proces obstawiania
+            interactableObject.EndGame();
         }
     }
 
