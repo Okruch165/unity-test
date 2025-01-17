@@ -30,7 +30,7 @@ public class RockPaperScissors : MonoBehaviour
     private void Start()
     {
         // Znajdź MoneyManager w scenie
-        moneyManager = FindObjectOfType<MoneyManager>();
+        moneyManager = FindFirstObjectByType<MoneyManager>();
         if (moneyManager == null)
         {
             Debug.LogError("MoneyManager not found in the scene!");
@@ -204,7 +204,7 @@ public class RockPaperScissors : MonoBehaviour
         Debug.Log("Game has ended. Flags reset."); // Debug log for game reset
 
         // Notify the InteractableObjectRockPaperScissors to reset its state
-        InteractableObjectRockPaperScissors interactableObject = FindObjectOfType<InteractableObjectRockPaperScissors>();
+        InteractableObjectRockPaperScissors interactableObject = FindFirstObjectByType<InteractableObjectRockPaperScissors>();
         if (interactableObject != null)
         {
             interactableObject.EndGame();

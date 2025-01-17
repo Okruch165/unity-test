@@ -24,7 +24,7 @@ public class BlockRaceGame : MonoBehaviour
     {
         Canvas.enabled = false; // Disable the canvas at the start
         instructionText.text = "Press E to start betting!"; // Wyświetl instrukcję na starcie
-        moneyManager = FindObjectOfType<MoneyManager>(); // Znajdź MoneyManager w scenie
+        moneyManager = Object.FindFirstObjectByType<MoneyManager>(); // Znajdź MoneyManager w scenie
     }
 
     public void StartBettingProcess() // Changed to public
@@ -131,7 +131,7 @@ public class BlockRaceGame : MonoBehaviour
         Debug.Log("Block Race Game has ended. Flags reset."); // Debug log for game reset
 
         // Notify the InteractableObjectBlockRace to reset its state
-        InteractableObjectBlockRace interactableObject = FindObjectOfType<InteractableObjectBlockRace>();
+        InteractableObjectBlockRace interactableObject = Object.FindFirstObjectByType<InteractableObjectBlockRace>();
         if (interactableObject != null)
         {
             interactableObject.EndGame();
