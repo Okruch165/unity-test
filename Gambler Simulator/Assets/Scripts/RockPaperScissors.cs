@@ -93,8 +93,6 @@ public class RockPaperScissors : MonoBehaviour
         {
             rockPaperScissorsCanvas.gameObject.SetActive(true);
         }
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
 
         // Ukryj teksty wyników na początku
         npcChoiceText.gameObject.SetActive(false);
@@ -133,6 +131,10 @@ public class RockPaperScissors : MonoBehaviour
             Debug.Log("Not enough money to continue the game!");
             ShowMessage("Not enough money to continue the game!");
             return;
+        }
+                if (rockPaperScissorsCanvas != null)
+        {
+            rockPaperScissorsCanvas.gameObject.SetActive(true);
         }
 
         // Odejmij obstawioną kwotę od pieniędzy gracza

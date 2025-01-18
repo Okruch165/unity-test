@@ -25,17 +25,26 @@ public class BlockRaceGame : MonoBehaviour
         Canvas.enabled = false; // Disable the canvas at the start
         instructionText.text = "Press E to start betting!"; // Wyświetl instrukcję na starcie
         moneyManager = Object.FindFirstObjectByType<MoneyManager>(); // Znajdź MoneyManager w scenie
+
     }
 
     public void StartBettingProcess() // Changed to public
-    {
-        Debug.Log("Press 1, 2, 3, or 4 to bet on a rat!"); // Wyświetl instrukcję w konsoli
+    { // Wyświetl instrukcję w konsoli
+        if (Canvas != null)
+        {
+            Canvas.gameObject.SetActive(true);
+            resultText.gameObject.SetActive(false);
+        }
         instructionText.text = "Press 1, 2, 3, or 4 to bet on a rat!"; // Wyświetl instrukcję na ekranie
         StartCoroutine(WaitForBetInput()); // Rozpocznij oczekiwanie na wybór gracza
+
     }
 
     public void StartRace(int bet)
     {
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         if (isRaceActive) // Sprawdź, czy wyścig już trwa
         {
             Debug.Log("Race is already active.");
@@ -129,6 +138,7 @@ public class BlockRaceGame : MonoBehaviour
         Canvas.enabled = false; // Ukryj canvas
         hasWinningRatReachedFinishLine = false; // Reset the winning rat flag
         Debug.Log("Block Race Game has ended. Flags reset."); // Debug log for game reset
+        
 
         // Notify the InteractableObjectBlockRace to reset its state
         InteractableObjectBlockRace interactableObject = Object.FindFirstObjectByType<InteractableObjectBlockRace>();
@@ -136,6 +146,8 @@ public class BlockRaceGame : MonoBehaviour
         {
             interactableObject.EndGame();
         }
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private IEnumerator WaitForBetInput()

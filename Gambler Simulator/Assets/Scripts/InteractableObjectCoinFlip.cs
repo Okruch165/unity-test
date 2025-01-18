@@ -40,7 +40,7 @@ public class InteractableObjectCoinFlip : MonoBehaviour
         // Wyświetl tekst tylko, gdy gracz jest blisko i patrzy na obiekt
         if (isNear && isLookingAt)
         {
-            GUI.Label(new Rect(10, 10, 200, 20), "Press 'E' to start Rock-Paper-Scissors");
+            GUI.Label(new Rect(10, 10, 200, 20), "Press 'E' to start Coin Flip");
         }
     }
 
